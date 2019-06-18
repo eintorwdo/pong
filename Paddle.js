@@ -4,9 +4,10 @@ class Paddle {
     this.up = keyUp;
     this.down = keyDown;
     this.width = 30;
-    this.height = 90;
+    this.height = 120;
     this.left = left;
     this.y = height/2;
+    this.paddleSpeed = 20;
     if(this.left){
       this.x = this.width;
     }
@@ -22,11 +23,11 @@ class Paddle {
   
   update(){
     if(keyIsDown(this.up)){
-      this.y = this.y - 10;
+      this.y = this.y - this.paddleSpeed;
       this.y = constrain(this.y, this.height/2, height - this.height/2);
     }
     else if(keyIsDown(this.down)){
-      this.y = this.y + 10;
+      this.y = this.y + this.paddleSpeed;
       this.y = constrain(this.y, this.height/2, height - this.height/2);
     }
   }
