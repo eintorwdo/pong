@@ -26,11 +26,11 @@ class Ball{
     this.y = this.y + this.yspeed;
     
     if(this.x - this.r < 30){
-      setTimeout(this.reset(), 1000);
+      //setTimeout(this.reset(), 1000);
       return -1;
     }
     else if(this.x + this.r > width - 30){
-      setTimeout(this.reset(), 1000);
+      //setTimeout(this.reset(), 1000);
       return 1;
     }
     

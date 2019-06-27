@@ -36,11 +36,13 @@ function draw() {
     rightScore++;
     leftPaddle.reset();
     rightPaddle.reset();
+    ball.reset();
   }
   if(ball.update() == 1){
     leftScore++;
     leftPaddle.reset();
     rightPaddle.reset();
+    ball.reset();
   }
   
   leftPaddle.show();
