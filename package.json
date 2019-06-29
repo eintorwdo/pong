@@ -1,0 +1,24 @@
+{
+  "name": "pong_2019_06_17_21_29_03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Ball.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eintorwdo/pong.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eintorwdo/pong/issues"
+  },
+  "homepage": "https://github.com/eintorwdo/pong#readme"
+}
