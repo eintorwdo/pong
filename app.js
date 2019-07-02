@@ -2,6 +2,10 @@ const express = require('express')
 var app = express()
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var Ball = require('./Ball.js')
+global.width = 800
+global.height = 600
+var b = new Ball(width, height)
 
 app.use(express.static('public'))
 

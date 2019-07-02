@@ -1,15 +1,16 @@
 class Ball{
   
-  constructor(rightPaddle, leftPaddle){
+  constructor(w, h){
+    this.width
     this.d = 20;
     this.r = this.d/2;
     this.x = width/2;
     this.y = height/2;
-    this.angle = random(-PI/4, PI/4);
+    this.angle = Math.random(-Math.PI/4, Math.PI/4);
     this.maxSpeed = 11;
     this.minSpeed = 2;
-    this.xspeed = this.minSpeed * cos(this.angle);
-    this.yspeed = this.minSpeed * sin(this.angle);
+    this.xspeed = this.minSpeed * Math.cos(this.angle);
+    this.yspeed = this.minSpeed * Math.sin(this.angle);
   }
   
   reset(){
@@ -17,8 +18,8 @@ class Ball{
     this.y = height/2;
     this.angle = random(-PI/4, PI/4);
     var direction = random([-1,1]);
-    this.xspeed = direction * 2 * cos(this.angle);
-    this.yspeed = 2 * sin(this.angle);
+    this.xspeed = direction * 2 * Math.cos(this.angle);
+    this.yspeed = 2 * Math.sin(this.angle);
   }
   
   update(){
@@ -59,8 +60,8 @@ class Ball{
       if(newSpeed < this.minSpeed){
         newSpeed = this.minSpeed;
       }
-      this.xspeed = -newSpeed * cos(this.angle);
-      this.yspeed = -newSpeed * sin(this.angle);
+      this.xspeed = -newSpeed * Math.cos(this.angle);
+      this.yspeed = -newSpeed * Math.sin(this.angle);
     }
   }
   
@@ -84,8 +85,8 @@ class Ball{
       if(newSpeed < this.minSpeed){
         newSpeed = this.minSpeed;
       }
-      this.xspeed = newSpeed * cos(this.angle);
-      this.yspeed = -newSpeed * sin(this.angle);
+      this.xspeed = newSpeed * Math.cos(this.angle);
+      this.yspeed = -newSpeed * Math.sin(this.angle);
     }
   }
   
@@ -94,3 +95,5 @@ class Ball{
     circle(this.x, this.y, this.d);
   }
 }
+
+module.exports = Ball
