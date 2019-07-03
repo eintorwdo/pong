@@ -16,8 +16,8 @@ class Ball{
   reset(){
     this.x = width/2;
     this.y = height/2;
-    this.angle = random(-PI/4, PI/4);
-    var direction = random([-1,1]);
+    this.angle = Math.random(-Math.PI/4, Math.PI/4);
+    var direction = Math.random([-1,1]);
     this.xspeed = direction * 2 * Math.cos(this.angle);
     this.yspeed = 2 * Math.sin(this.angle);
   }
@@ -88,11 +88,6 @@ class Ball{
       this.xspeed = newSpeed * Math.cos(this.angle);
       this.yspeed = -newSpeed * Math.sin(this.angle);
     }
-  }
-  
-  show(){
-    fill(100);
-    circle(this.x, this.y, this.d);
   }
 }
 

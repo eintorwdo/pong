@@ -10,7 +10,7 @@ function setup() {
   $('body').append('<ul id="user-list"></ul>');
   // leftPaddle = new Paddle(UP_ARROW,DOWN_ARROW,true);
   // rightPaddle = new Paddle(87,83,false);
-  // ball = new Ball();
+  ball = new Ball();
 }
 
 function draw() {
@@ -23,32 +23,39 @@ function draw() {
     }
   }
   
-  if(leftPaddle && rightPaddle && ball){
-    textSize(32);
-    textAlign(LEFT);
-    text(leftScore.toString(), 4*leftPaddle.width, 30);
-    text(rightScore.toString(), width - 4*rightPaddle.width, 30);
+  if(ball){
+    // textSize(32);
+    // textAlign(LEFT);
+    // text(leftScore.toString(), 4*leftPaddle.width, 30);
+    // text(rightScore.toString(), width - 4*rightPaddle.width, 30);
     
-    leftPaddle.update();
-    rightPaddle.update();
-    ball.hitRightPaddle(rightPaddle);
-    ball.hitLeftPaddle(leftPaddle);
+    // leftPaddle.update();
+    // rightPaddle.update();
+    // ball.hitRightPaddle(rightPaddle);
+    // ball.hitLeftPaddle(leftPaddle);
     
-    if(ball.update() == -1){
-      rightScore++;
-      leftPaddle.reset();
-      rightPaddle.reset();
-      ball.reset();
+    // if(ball.update() == -1){
+      // rightScore++;
+      // leftPaddle.reset();
+      // rightPaddle.reset();
+      // ball.reset();
+    // }
+    // if(ball.update() == 1){
+      // leftScore++;
+      // leftPaddle.reset();
+      // rightPaddle.reset();
+      // ball.reset();
+    // }
+    
+    // leftPaddle.show();
+    // rightPaddle.show();
+
+    if(window.gameData){
+      ball.x = window.gameData.x;
+      ball.y = window.gameData.y;
+      leftScore = window.gameData.leftScore;
+      rightScore = window.gameData.rightScore;
+      ball.show();
     }
-    if(ball.update() == 1){
-      leftScore++;
-      leftPaddle.reset();
-      rightPaddle.reset();
-      ball.reset();
-    }
-    
-    leftPaddle.show();
-    rightPaddle.show();
-    ball.show();
   }
 }
