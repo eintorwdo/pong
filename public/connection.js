@@ -1,10 +1,13 @@
 const socket = io();
 new p5();
-var up = UP_ARROW;
-// var down = 'DOWN_ARROW';
+var side;
 
 socket.on('user', (data) => {
     $('#user-list').append(`<li id="${data}">${data}</li>`);
+})
+
+socket.on('side', (data) => {
+    side = data.left;
 })
 
 socket.on('dconnected', (data) => {
@@ -18,13 +21,13 @@ socket.on('tick', (data) => {
 setInterval(function(){
     if(keyIsDown(UP_ARROW)){
         socket.emit('paddleMovement', {
-            left: true,
+            left: side,
             up: true
         });
     }
     else if(keyIsDown(DOWN_ARROW)){
         socket.emit('paddleMovement', {
-            left: true,
+            left: side,
             down: true
         });
     }

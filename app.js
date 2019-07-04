@@ -24,6 +24,12 @@ var allClients = [];
 io.on('connection', (socket) => {
     allClients.push(socket)
     io.emit('user', socket.id)
+    if(allClients[0] == socket){
+        socket.emit('side', {left: true})
+    }
+    else if(allClients[1] == socket){
+        socket.emit('side', {left: false})
+    }
 
     socket.on('paddleMovement', (data) => {
         if(data.left){
@@ -50,7 +56,7 @@ io.on('connection', (socket) => {
         io.emit('dconneted', socket.id)
     })
 })
-  
+
 setInterval(function(){
 
     b.hitRightPaddle(rightPaddle);
@@ -78,5 +84,4 @@ setInterval(function(){
         rightPaddle
     });
 }, 15);
-
 server.listen(3000)

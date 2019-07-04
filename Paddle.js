@@ -1,6 +1,7 @@
 class Paddle {
   
   constructor(left){
+    this.width = 30;
     if(left == true){
       this.left = true
       this.x = this.width
@@ -11,7 +12,7 @@ class Paddle {
     }
     this.y = height/2;
     this.paddleSpeed = 20;
-    this.hitMargin = 15;
+    this.hitMargin = 5;
     this.height = 120;
   }
   

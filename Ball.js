@@ -40,7 +40,6 @@ class Ball{
   
   hitRightPaddle(rightPaddle){
     if(this.x + this.r > rightPaddle.x - rightPaddle.width/2 && this.y > rightPaddle.y - rightPaddle.height/2 - rightPaddle.hitMargin && this.y < rightPaddle.y + rightPaddle.height/2 + rightPaddle.hitMargin){
-      console.log('tescik');
       this.x = rightPaddle.x - rightPaddle.width/2 - this.r;
       //this.xspeed *= -1;
       
