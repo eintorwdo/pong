@@ -8,8 +8,8 @@ var rightScore = 0;
 function setup() {
   createCanvas(800, 600);
   $('body').append('<ul id="user-list"></ul>');
-  // leftPaddle = new Paddle(UP_ARROW,DOWN_ARROW,true);
-  // rightPaddle = new Paddle(87,83,false);
+  leftPaddle = new Paddle(true);
+  rightPaddle = new Paddle(false);
   ball = new Ball();
 }
 
@@ -29,8 +29,6 @@ function draw() {
     // text(leftScore.toString(), 4*leftPaddle.width, 30);
     // text(rightScore.toString(), width - 4*rightPaddle.width, 30);
     
-    // leftPaddle.update();
-    // rightPaddle.update();
     // ball.hitRightPaddle(rightPaddle);
     // ball.hitLeftPaddle(leftPaddle);
     
@@ -51,11 +49,19 @@ function draw() {
     // rightPaddle.show();
 
     if(window.gameData){
+      textSize(32);
+      textAlign(LEFT);
+      text(window.gameData.leftScore.toString(), 4*leftPaddle.width, 30);
+      text(window.gameData.rightScore.toString(), width - 4*rightPaddle.width, 30);
+      leftPaddle.y = window.gameData.leftPaddle.y;
+      rightPaddle.y = window.gameData.rightPaddle.y;
       ball.x = window.gameData.x;
       ball.y = window.gameData.y;
       leftScore = window.gameData.leftScore;
       rightScore = window.gameData.rightScore;
       ball.show();
+      leftPaddle.show();
+      rightPaddle.show();
     }
   }
 }

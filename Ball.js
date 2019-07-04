@@ -27,11 +27,9 @@ class Ball{
     this.y = this.y + this.yspeed;
     
     if(this.x - this.r < 30){
-      //setTimeout(this.reset(), 1000);
       return -1;
     }
     else if(this.x + this.r > width - 30){
-      //setTimeout(this.reset(), 1000);
       return 1;
     }
     
@@ -42,11 +40,12 @@ class Ball{
   
   hitRightPaddle(rightPaddle){
     if(this.x + this.r > rightPaddle.x - rightPaddle.width/2 && this.y > rightPaddle.y - rightPaddle.height/2 - rightPaddle.hitMargin && this.y < rightPaddle.y + rightPaddle.height/2 + rightPaddle.hitMargin){
+      console.log('tescik');
       this.x = rightPaddle.x - rightPaddle.width/2 - this.r;
       //this.xspeed *= -1;
       
       var diff = (rightPaddle.y - this.y)/(rightPaddle.height/2);
-      var maxAngle = 4*PI/12;
+      var maxAngle = 4*Math.PI/12;
       
       if(diff > 1){
         diff = 1;
@@ -56,7 +55,7 @@ class Ball{
       }
       
       this.angle = diff * maxAngle;
-      var newSpeed = abs(this.maxSpeed * diff);
+      var newSpeed = Math.abs(this.maxSpeed * diff);
       if(newSpeed < this.minSpeed){
         newSpeed = this.minSpeed;
       }
@@ -71,7 +70,7 @@ class Ball{
       //this.xspeed *= -1;
       
       var diff = (leftPaddle.y - this.y)/(leftPaddle.height/2);
-      var maxAngle = 4*PI/12;
+      var maxAngle = 4*Math.PI/12;
       
       if(diff > 1){
         diff = 1;
@@ -81,7 +80,7 @@ class Ball{
       }
       
       this.angle = diff * maxAngle;
-      var newSpeed = abs(this.maxSpeed * diff);
+      var newSpeed = Math.abs(this.maxSpeed * diff);
       if(newSpeed < this.minSpeed){
         newSpeed = this.minSpeed;
       }
