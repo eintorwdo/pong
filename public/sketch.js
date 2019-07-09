@@ -8,6 +8,7 @@ var rightScore = 0;
 function setup() {
   createCanvas(800, 600);
   $('body').append('<ul id="user-list"></ul>');
+  window.list = true;
   leftPaddle = new Paddle(true);
   rightPaddle = new Paddle(false);
   ball = new Ball();

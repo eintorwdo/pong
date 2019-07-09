@@ -24,6 +24,11 @@ var allClients = [];
 io.on('connection', (socket) => {
     allClients.push(socket)
     io.emit('user', socket.id)
+    var clientIDs = []
+    for(sock of allClients){
+        clientIDs.push(sock.id)
+    }
+    socket.emit('users', clientIDs)
     if(allClients[0] == socket){
         socket.emit('side', {left: true})
     }
@@ -53,7 +58,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         var i = allClients.indexOf(socket)
         allClients.splice(i, 1)
-        io.emit('dconneted', socket.id)
+        io.emit('dconnected', socket.id)
     })
 })
 
