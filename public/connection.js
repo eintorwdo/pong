@@ -3,24 +3,18 @@ new p5();
 var side;
 
 function waitForList(data){
-    if(window.list == true){
-        for(user of data){
-            $('#user-list').append(`<li id="${user}">${user}</li>`);
-        }
-    }
-    else{
-        setTimeout(waitForList(data), 25);
-    }
+    $('#user-list').append(`<li id="${data}">${data}</li>`);
 }
-
+  
 
 socket.on('user', (data) => {
-    $('#user-list').append(`<li id="${data}">${data}</li>`);
+    waitForList(data);
 })
 
 socket.on('users', (data) => {
-
-    // waitForList(data);
+    for(user of data){
+        waitForList(user);
+    }
 })
 
 socket.on('side', (data) => {

@@ -21,14 +21,26 @@ app.get('/', function(req, res){
 
 var allClients = [];
 
+function removeSender(sock, arr){
+    var newArr = arr.slice(0)
+    for(i=0;i<newArr.length;i++){
+        if(newArr[i].id == sock.id){
+            newArr.splice(i,1)
+            continue
+        }
+        newArr[i] = newArr[i].id
+    }
+    return newArr
+}
+
 io.on('connection', (socket) => {
     allClients.push(socket)
-    io.emit('user', socket.id)
-    var clientIDs = []
-    for(sock of allClients){
-        clientIDs.push(sock.id)
-    }
-    socket.emit('users', clientIDs)
+
+    setTimeout(function(){
+        socket.emit('users', removeSender(socket, allClients))
+        io.emit('user', socket.id)
+    }, 250)
+    
     if(allClients[0] == socket){
         socket.emit('side', {left: true})
     }

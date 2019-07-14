@@ -5,6 +5,7 @@ var leftScore = 0;
 var rightScore = 0;
 
 
+
 function setup() {
   createCanvas(800, 600);
   $('body').append('<ul id="user-list"></ul>');
@@ -15,7 +16,7 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+background(220);
   
   stroke(100);
   for(i=0;i<15;i++){
