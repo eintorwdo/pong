@@ -21,24 +21,29 @@ app.get('/', function(req, res){
 
 var allClients = [];
 
-function removeSender(sock, arr){
-    var newArr = arr.slice(0)
+function removeSender(sock, all){
+    var newArr = Object.keys(all);
+    console.log(newArr)
     for(i=0;i<newArr.length;i++){
-        if(newArr[i].id == sock.id){
+        newArr[i] = newArr[i].toString()
+        if(newArr[i] == sock.id){
             newArr.splice(i,1)
             continue
         }
-        newArr[i] = newArr[i].id
     }
     return newArr
 }
 
 io.on('connection', (socket) => {
     allClients.push(socket)
+    var roomNumber = Math.ceil(allClients.length/2)
+    socket.join(`room-${roomNumber}`)
+
+    // console.log(io.sockets.adapter.rooms['room-1'].sockets)
 
     setTimeout(function(){
-        socket.emit('users', removeSender(socket, allClients))
-        io.emit('user', socket.id)
+        socket.emit('users', removeSender(socket, io.sockets.adapter.rooms[`room-${roomNumber}`].sockets))
+        io.in(`room-${roomNumber}`).emit('user', socket.id)
     }, 250)
     
     if(allClients[0] == socket){
