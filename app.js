@@ -7,11 +7,11 @@ var Paddle = require('./Paddle.js')
 global.width = 800
 global.height = 600
 
-var b = new Ball(width, height)
-var leftPaddle = new Paddle(true)
-var rightPaddle = new Paddle(false)
-var leftScore = 0;
-var rightScore = 0;
+// var b = new Ball(width, height)
+// var leftPaddle = new Paddle(true)
+// var rightPaddle = new Paddle(false)
+// var leftScore = 0;
+// var rightScore = 0;
 
 app.use(express.static('public'))
 
@@ -50,39 +50,46 @@ io.on('connection', (socket) => {
     if(gameRoom.has(`room-${roomNumber}`)){
         var room = gameRoom.get(`room-${roomNumber}`)
         room.clients.push(socket.id)
+        room.rightPaddle = new Paddle(false)
+        room.ball = new Ball(width, height)
+        room.leftScore = 0
+        room.rightScore = 0
         gameRoom.set(`room-${roomNumber}`, room)
-        console.log(gameRoom.get(`room-${roomNumber}`).clients)
     }
     else{
         var clients = [socket.id]
-        gameRoom.set(`room-${roomNumber}`, {clients})
-        console.log(gameRoom.get(`room-${roomNumber}`).clients)
+        var leftPaddle = new Paddle(true)
+        var leftScore = 0
+        var rightScore = 0
+        gameRoom.set(`room-${roomNumber}`, {clients, leftPaddle, leftScore, rightScore})
     }
-    
-    if(allClients[0] == socket){
+
+    if(gameRoom.get(`room-${roomNumber}`).clients[0] == socket.id){
         socket.emit('side', {left: true})
     }
-    else if(allClients[1] == socket){
+    else if(gameRoom.get(`room-${roomNumber}`).clients[1] == socket.id){
         socket.emit('side', {left: false})
     }
 
     socket.on('paddleMovement', (data) => {
-        if(data.left){
+        var room = gameRoom.get(`room-${roomNumber}`)
+        if(room.clients[0] == socket.id){
             if(data.up){
-                leftPaddle.update(data.up)
+                room.leftPaddle.update(data.up)
             }
             else if(data.down){
-                leftPaddle.update(false, data.down)
+                room.leftPaddle.update(false, data.down)
             }
         }
-        else{
+        else if(room.clients[1] == socket.id){
             if(data.up){
-                rightPaddle.update(data.up)
+                room.rightPaddle.update(data.up)
             }
             else if(data.down){
-                rightPaddle.update(false, data.down)
+                room.rightPaddle.update(false, data.down)
             }
         }
+        gameRoom.set(`room-${roomNumber}`, room)
     })
 
     socket.on('disconnect', () => {
@@ -93,40 +100,46 @@ io.on('connection', (socket) => {
         var index = room.clients.indexOf(socket.id)
         room.clients.splice(index, 1)
         if(room.clients.length == 0){
-            gameRoom.delete(`room-${roomNumber}`)
+            // gameRoom.delete(`room-${roomNumber}`)
         }
         else{
             gameRoom.set(`room-${roomNumber}`, room)
-            console.log(gameRoom.get(`room-${roomNumber}`))
         }
     })
+
+    if(gameRoom.has(`room-${roomNumber}`)){
+        if(gameRoom.get(`room-${roomNumber}`).clients.length == 2){
+            setInterval(function(){
+                var room = gameRoom.get(`room-${roomNumber}`)
+                room.ball.hitRightPaddle(room.rightPaddle);
+                room.ball.hitLeftPaddle(room.leftPaddle);
+
+                if(room.ball.update() == -1){
+                    room.leftPaddle.reset();
+                    room.rightPaddle.reset();
+                    room.rightScore++;
+                    room.ball.reset();
+                }
+                else if(room.ball.update() == 1){
+                    room.leftScore++;
+                    room.leftPaddle.reset();
+                    room.rightPaddle.reset();
+                    room.ball.reset();
+                }
+
+                gameRoom.set(`room-${roomNumber}`, room)
+
+                io.in(`room-${roomNumber}`).emit('tick', {
+                    x: room.ball.x,
+                    y: room.ball.y,
+                    leftScore: room.leftScore,
+                    rightScore: room.rightScore,
+                    leftPaddle: room.leftPaddle,
+                    rightPaddle: room.rightPaddle
+                });
+            }, 15);
+        }
+    }
 })
 
-// setInterval(function(){
-
-//     b.hitRightPaddle(rightPaddle);
-//     b.hitLeftPaddle(leftPaddle);
-
-//     if(b.update() == -1){
-//         leftPaddle.reset();
-//         rightPaddle.reset();
-//         rightScore++;
-//         b.reset();
-//         }
-//         else if(b.update() == 1){
-//         leftScore++;
-//         leftPaddle.reset();
-//         rightPaddle.reset();
-//         b.reset();
-//         }
-
-//     io.emit('tick', {
-//         x: b.x,
-//         y: b.y,
-//         leftScore,
-//         rightScore,
-//         leftPaddle,
-//         rightPaddle
-//     });
-// }, 15);
 server.listen(3000)
