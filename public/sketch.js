@@ -7,8 +7,11 @@ var rightScore = 0;
 
 
 function setup() {
-  createCanvas(800, 600);
-  $('body').append('<ul id="user-list"></ul>');
+  var cnv = createCanvas(800, 600);
+  cnv.parent('wrapper');
+  $('#wrapper').append('<ul id="user-list"></ul>');
+  $('body').append('<div id="lower-wrapper"></div>')
+  $('#lower-wrapper').append('<p id="ready-list">Players not ready: </p>');
   window.list = true;
   leftPaddle = new Paddle(true);
   rightPaddle = new Paddle(false);

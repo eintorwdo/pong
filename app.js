@@ -55,13 +55,20 @@ io.on('connection', (socket) => {
         room.leftScore = 0
         room.rightScore = 0
         gameRoom.set(`room-${roomNumber}`, room)
+        setTimeout(()=>{
+            io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
+        },300) 
     }
     else{
         var clients = [socket.id]
         var leftPaddle = new Paddle(true)
         var leftScore = 0
         var rightScore = 0
-        gameRoom.set(`room-${roomNumber}`, {clients, leftPaddle, leftScore, rightScore})
+        var ready = [false, false]
+        gameRoom.set(`room-${roomNumber}`, {clients, leftPaddle, leftScore, rightScore, ready})
+        setTimeout(()=>{
+            io.in(`room-${roomNumber}`).emit('users-ready', ready)
+        },300) 
     }
 
     if(gameRoom.get(`room-${roomNumber}`).clients[0] == socket.id){
@@ -92,12 +99,72 @@ io.on('connection', (socket) => {
         gameRoom.set(`room-${roomNumber}`, room)
     })
 
+    socket.on('ready', () => {
+        var room = gameRoom.get(`room-${roomNumber}`)
+        if(room.clients.length < 2){
+            room.ready[0] = true
+        }
+        else{
+            var index = room.clients.indexOf(socket.id)
+            room.ready[index] = true
+        }
+        gameRoom.set(`room-${roomNumber}`, room)
+        io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
+
+        if(gameRoom.has(`room-${roomNumber}`)){
+            // var room = gameRoom.get(`room-${roomNumber}`)
+            var areReady = room.ready.every((player) => {
+                return player
+            })
+            if(room.clients.length == 2 && areReady){
+                var x = 3
+                var countdown = setInterval(() => {
+                    io.in(`room-${roomNumber}`).emit('countdown', x)
+                    x--
+                    if(x<0){
+                        clearInterval(countdown)
+                        
+                        setInterval(function(){
+                            room.ball.hitRightPaddle(room.rightPaddle);
+                            room.ball.hitLeftPaddle(room.leftPaddle);
+            
+                            if(room.ball.update() == -1){
+                                room.leftPaddle.reset();
+                                room.rightPaddle.reset();
+                                room.rightScore++;
+                                room.ball.reset();
+                            }
+                            else if(room.ball.update() == 1){
+                                room.leftScore++;
+                                room.leftPaddle.reset();
+                                room.rightPaddle.reset();
+                                room.ball.reset();
+                            }
+            
+                            gameRoom.set(`room-${roomNumber}`, room)
+            
+                            io.in(`room-${roomNumber}`).emit('tick', {
+                                x: room.ball.x,
+                                y: room.ball.y,
+                                leftScore: room.leftScore,
+                                rightScore: room.rightScore,
+                                leftPaddle: room.leftPaddle,
+                                rightPaddle: room.rightPaddle
+                            });
+                        }, 15);
+                    }
+                }, 1000)
+            }
+        }
+    })
+
     socket.on('disconnect', () => {
         var i = allClients.indexOf(socket)
         allClients.splice(i, 1)
         io.emit('dconnected', socket.id)
         var room = gameRoom.get(`room-${roomNumber}`)
         var index = room.clients.indexOf(socket.id)
+        room.ready[index] = false
         room.clients.splice(index, 1)
         if(room.clients.length == 0){
             // gameRoom.delete(`room-${roomNumber}`)
@@ -106,40 +173,6 @@ io.on('connection', (socket) => {
             gameRoom.set(`room-${roomNumber}`, room)
         }
     })
-
-    if(gameRoom.has(`room-${roomNumber}`)){
-        if(gameRoom.get(`room-${roomNumber}`).clients.length == 2){
-            setInterval(function(){
-                var room = gameRoom.get(`room-${roomNumber}`)
-                room.ball.hitRightPaddle(room.rightPaddle);
-                room.ball.hitLeftPaddle(room.leftPaddle);
-
-                if(room.ball.update() == -1){
-                    room.leftPaddle.reset();
-                    room.rightPaddle.reset();
-                    room.rightScore++;
-                    room.ball.reset();
-                }
-                else if(room.ball.update() == 1){
-                    room.leftScore++;
-                    room.leftPaddle.reset();
-                    room.rightPaddle.reset();
-                    room.ball.reset();
-                }
-
-                gameRoom.set(`room-${roomNumber}`, room)
-
-                io.in(`room-${roomNumber}`).emit('tick', {
-                    x: room.ball.x,
-                    y: room.ball.y,
-                    leftScore: room.leftScore,
-                    rightScore: room.rightScore,
-                    leftPaddle: room.leftPaddle,
-                    rightPaddle: room.rightPaddle
-                });
-            }, 15);
-        }
-    }
 })
 
 server.listen(3000)

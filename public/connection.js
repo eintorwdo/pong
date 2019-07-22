@@ -5,7 +5,27 @@ var side;
 function waitForList(data){
     $('#user-list').append(`<li id="${data}">${data}</li>`);
 }
-  
+
+$('#ready').click(() => {
+    socket.emit('ready');
+})
+
+socket.on('users-ready', (data) => {
+    $('#players-ready').remove();
+    var str = "";
+    for(i=0;i<data.length;i++){
+        if(!data[i]){
+            str = str + ' player ' + (i+1) + ',';
+        }
+    }
+    console.log(str);
+    $('#lower-wrapper').append(`<p id="players-ready">${str}</p>`);
+})
+
+socket.on('countdown', (data) => {
+    console.log(data);
+    // $('#defaultCanvas0').append(data);
+})
 
 socket.on('user', (data) => {
     waitForList(data);

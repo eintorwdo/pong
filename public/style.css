@@ -9,3 +9,26 @@ canvas {
 #user-list{
   
 }
+
+#ready{
+  
+}
+
+#wrapper{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  /* align-items: center */
+}
+
+#button-wrp{
+  margin-right: 15px;
+}
+
+#ready-list{
+  margin-left: 15px;
+}
+
+#lower-wrapper{
+  display: flex;
+}
