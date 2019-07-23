@@ -4,13 +4,20 @@ var ball;
 var leftScore = 0;
 var rightScore = 0;
 
+function selectName(){
+  var name = prompt('Enter your name:');
+  if(!name){
+    selectName()
+  }
+}
 
+selectName()
 
 function setup() {
   var cnv = createCanvas(800, 600);
-  cnv.parent('wrapper');
+  cnv.parent('canvas-wrapper');
   $('#wrapper').append('<ul id="user-list"></ul>');
-  $('body').append('<div id="lower-wrapper"></div>')
+  $('#test').append('<div id="lower-wrapper"></div>')
   $('#lower-wrapper').append('<p id="ready-list">Players not ready: </p>');
   window.list = true;
   leftPaddle = new Paddle(true);
@@ -29,30 +36,6 @@ background(220);
   }
   
   if(ball){
-    // textSize(32);
-    // textAlign(LEFT);
-    // text(leftScore.toString(), 4*leftPaddle.width, 30);
-    // text(rightScore.toString(), width - 4*rightPaddle.width, 30);
-    
-    // ball.hitRightPaddle(rightPaddle);
-    // ball.hitLeftPaddle(leftPaddle);
-    
-    // if(ball.update() == -1){
-      // rightScore++;
-      // leftPaddle.reset();
-      // rightPaddle.reset();
-      // ball.reset();
-    // }
-    // if(ball.update() == 1){
-      // leftScore++;
-      // leftPaddle.reset();
-      // rightPaddle.reset();
-      // ball.reset();
-    // }
-    
-    // leftPaddle.show();
-    // rightPaddle.show();
-
     if(window.gameData){
       textSize(32);
       textAlign(LEFT);

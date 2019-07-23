@@ -11,7 +11,26 @@ canvas {
 }
 
 #ready{
-  
+  background-color: rgb(88, 177, 0);
+  padding: 5px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  border: none;
+  font-size: 16px;
+  border-radius: 3px;
+}
+
+#ready:disabled{
+  background-color: gray;
+}
+
+#ready:hover{
+  cursor: pointer;
+}
+
+#ready:active{
+  background-color: lime;
 }
 
 #wrapper{
@@ -26,9 +45,21 @@ canvas {
 }
 
 #ready-list{
-  margin-left: 15px;
+  /* margin-left: 15px; */
 }
 
 #lower-wrapper{
   display: flex;
+}
+
+#canvas-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#cntdwn{
+  margin: auto;
+  position: absolute;
+  font-size: 64px;
 }

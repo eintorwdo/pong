@@ -7,12 +7,6 @@ var Paddle = require('./Paddle.js')
 global.width = 800
 global.height = 600
 
-// var b = new Ball(width, height)
-// var leftPaddle = new Paddle(true)
-// var rightPaddle = new Paddle(false)
-// var leftScore = 0;
-// var rightScore = 0;
-
 app.use(express.static('public'))
 
 app.get('/', function(req, res){
@@ -24,7 +18,6 @@ var gameRoom = new Map()
 
 function removeSender(sock, all){
     var newArr = Object.keys(all);
-    // console.log(newArr)
     for(i=0;i<newArr.length;i++){
         newArr[i] = newArr[i].toString()
         if(newArr[i] == sock.id){
@@ -48,6 +41,7 @@ io.on('connection', (socket) => {
     }, 250)
 
     if(gameRoom.has(`room-${roomNumber}`)){
+        io.in(`room-${roomNumber}`).emit('tick', null)
         var room = gameRoom.get(`room-${roomNumber}`)
         room.clients.push(socket.id)
         room.rightPaddle = new Paddle(false)
@@ -101,59 +95,88 @@ io.on('connection', (socket) => {
 
     socket.on('ready', () => {
         var room = gameRoom.get(`room-${roomNumber}`)
-        if(room.clients.length < 2){
-            room.ready[0] = true
-        }
-        else{
-            var index = room.clients.indexOf(socket.id)
-            room.ready[index] = true
-        }
-        gameRoom.set(`room-${roomNumber}`, room)
-        io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
+        if(!room.countdown){
+            if(room.clients.length < 2){
+                room.ready[0] = true
+            }
+            else{
+                var index = room.clients.indexOf(socket.id)
+                room.ready[index] = true
+            }
+            gameRoom.set(`room-${roomNumber}`, room)
+            io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
 
-        if(gameRoom.has(`room-${roomNumber}`)){
-            // var room = gameRoom.get(`room-${roomNumber}`)
-            var areReady = room.ready.every((player) => {
-                return player
-            })
-            if(room.clients.length == 2 && areReady){
-                var x = 3
-                var countdown = setInterval(() => {
-                    io.in(`room-${roomNumber}`).emit('countdown', x)
-                    x--
-                    if(x<0){
-                        clearInterval(countdown)
-                        
-                        setInterval(function(){
-                            room.ball.hitRightPaddle(room.rightPaddle);
-                            room.ball.hitLeftPaddle(room.leftPaddle);
-            
-                            if(room.ball.update() == -1){
-                                room.leftPaddle.reset();
-                                room.rightPaddle.reset();
-                                room.rightScore++;
-                                room.ball.reset();
-                            }
-                            else if(room.ball.update() == 1){
-                                room.leftScore++;
-                                room.leftPaddle.reset();
-                                room.rightPaddle.reset();
-                                room.ball.reset();
-                            }
-            
-                            gameRoom.set(`room-${roomNumber}`, room)
-            
-                            io.in(`room-${roomNumber}`).emit('tick', {
-                                x: room.ball.x,
-                                y: room.ball.y,
-                                leftScore: room.leftScore,
-                                rightScore: room.rightScore,
-                                leftPaddle: room.leftPaddle,
-                                rightPaddle: room.rightPaddle
-                            });
-                        }, 15);
-                    }
-                }, 1000)
+            if(gameRoom.has(`room-${roomNumber}`)){
+                var areReady = room.ready.every((player) => {
+                    return player
+                })
+                if(room.clients.length == 2 && areReady){
+                    var x = 3
+                    room.countdown = setInterval(() => {
+                        io.in(`room-${roomNumber}`).emit('countdown', x)
+                        x--
+                        if(x<0){
+                            clearInterval(room.countdown)
+                            room.countdown = null
+                            io.in(`room-${roomNumber}`).emit('gameStart')
+                            room.gameInterval = setInterval(function(){
+                                room.ball.hitRightPaddle(room.rightPaddle);
+                                room.ball.hitLeftPaddle(room.leftPaddle);
+                
+                                if(room.ball.update() == -1){
+                                    room.leftPaddle.reset();
+                                    room.rightPaddle.reset();
+                                    room.rightScore++;
+                                    room.ball.reset();
+                                }
+                                else if(room.ball.update() == 1){
+                                    room.leftScore++;
+                                    room.leftPaddle.reset();
+                                    room.rightPaddle.reset();
+                                    room.ball.reset();
+                                }
+                
+                                gameRoom.set(`room-${roomNumber}`, room)
+                
+                                io.in(`room-${roomNumber}`).emit('tick', {
+                                    x: room.ball.x,
+                                    y: room.ball.y,
+                                    leftScore: room.leftScore,
+                                    rightScore: room.rightScore,
+                                    leftPaddle: room.leftPaddle,
+                                    rightPaddle: room.rightPaddle
+                                });
+
+                                if(room.leftScore > 4 || room.rightScore > 4){
+                                    room.ball.reset()
+                                    room.leftPaddle.reset()
+                                    room.rightPaddle.reset()
+                                    io.in(`room-${roomNumber}`).emit('tick', {
+                                        x: room.ball.x,
+                                        y: room.ball.y,
+                                        leftScore: room.leftScore,
+                                        rightScore: room.rightScore,
+                                        leftPaddle: room.leftPaddle,
+                                        rightPaddle: room.rightPaddle
+                                    });
+                                    clearInterval(room.gameInterval)
+                                    room.gameInterval = null
+                                    room.countdown = null
+                                    room.leftScore = 0
+                                    room.rightScore = 0
+                                    if(room.leftScore > room.rightScore){
+                                        io.in(`room-${roomNumber}`).emit('gameOver', room.clients[0])
+                                    }
+                                    else{
+                                        io.in(`room-${roomNumber}`).emit('gameOver', room.clients[1])
+                                    }
+                                    room.ready = [false, false]
+                                    io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
+                                }
+                            }, 15);
+                        }
+                    }, 1000)
+                }
             }
         }
     })
@@ -167,9 +190,37 @@ io.on('connection', (socket) => {
         room.ready[index] = false
         room.clients.splice(index, 1)
         if(room.clients.length == 0){
-            // gameRoom.delete(`room-${roomNumber}`)
+            if(room.countdown){
+                clearInterval(room.countdown)
+            }
+            clearInterval(room.gameInterval)
+            gameRoom.delete(`room-${roomNumber}`)
         }
         else{
+            if(room.countdown){
+                clearInterval(room.countdown)
+                io.in(`room-${roomNumber}`).emit('gameStart')
+            }
+            room.leftPaddle.reset()
+            room.rightPaddle.reset()
+            room.ball.reset()
+            if(room.gameInterval){
+                io.in(`room-${roomNumber}`).emit('tick', {
+                    x: room.ball.x,
+                    y: room.ball.y,
+                    leftScore: room.leftScore,
+                    rightScore: room.rightScore,
+                    leftPaddle: room.leftPaddle,
+                    rightPaddle: room.rightPaddle
+                });
+            }
+            clearInterval(room.gameInterval)
+            if(room.gameInterval){
+                socket.to(`room-${roomNumber}`).emit('opleft')
+            }
+            room.gameInterval = null
+            room.countdown = null
+            // room.ready = [false, false]
             gameRoom.set(`room-${roomNumber}`, room)
         }
     })

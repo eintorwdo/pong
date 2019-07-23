@@ -8,6 +8,7 @@ function waitForList(data){
 
 $('#ready').click(() => {
     socket.emit('ready');
+    $('#ready').attr("disabled", true);
 })
 
 socket.on('users-ready', (data) => {
@@ -24,7 +25,12 @@ socket.on('users-ready', (data) => {
 
 socket.on('countdown', (data) => {
     console.log(data);
-    // $('#defaultCanvas0').append(data);
+    $('#cntdwn').remove();
+    $('#canvas-wrapper').append(`<p id='cntdwn'>${data}</p>`);
+})
+
+socket.on('gameStart', () => {
+    $('#cntdwn').remove();
 })
 
 socket.on('user', (data) => {
@@ -47,6 +53,16 @@ socket.on('dconnected', (data) => {
 
 socket.on('tick', (data) => {
     window.gameData = data;
+})
+
+socket.on('opleft', () => {
+    alert('Opponent left. YOU WIN!');
+    $('#ready').attr("disabled", false);
+})
+
+socket.on('gameOver', (data) => {
+    alert(`Koniec gry. Wygrywa ${data}!`);
+    $('#ready').attr("disabled", false);
 })
 
 setInterval(function(){
