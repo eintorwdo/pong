@@ -7,8 +7,8 @@ class Ball{
     this.x = width/2;
     this.y = height/2;
     this.angle = Math.random(-Math.PI/4, Math.PI/4);
-    this.maxSpeed = 11;
-    this.minSpeed = 2;
+    this.maxSpeed = 10;
+    this.minSpeed = 3;
     var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0
     if(direction == 0){
       direction = -1

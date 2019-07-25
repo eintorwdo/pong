@@ -11,7 +11,7 @@ class Paddle {
       this.x = width - this.width
     }
     this.y = height/2;
-    this.paddleSpeed = 20;
+    this.paddleSpeed = 10;
     this.hitMargin = 5;
     this.height = 120;
   }

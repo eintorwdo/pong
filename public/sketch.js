@@ -4,14 +4,17 @@ var ball;
 var leftScore = 0;
 var rightScore = 0;
 
-function selectName(){
-  var name = prompt('Enter your name:');
-  if(!name){
-    selectName()
-  }
-}
+// function selectName(){
+//   var name = prompt('Enter your name:');
+//   if(!name){
+//     selectName()
+//   }
+//   else{
+//     socket.emit('username');
+//   }
+// }
 
-selectName()
+// selectName()
 
 function setup() {
   var cnv = createCanvas(800, 600);

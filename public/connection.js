@@ -2,6 +2,20 @@ const socket = io();
 new p5();
 var side;
 
+function selectName(){
+    var name = prompt('Enter your name:');
+    if(!name){
+        console.log('co sie dzieje')
+      selectName()
+    }
+    else{
+      socket.emit('username', name);
+    }
+}
+
+selectName()
+
+
 function waitForList(data){
     $('#user-list').append(`<li id="${data}">${data}</li>`);
 }
@@ -19,12 +33,12 @@ socket.on('users-ready', (data) => {
             str = str + ' player ' + (i+1) + ',';
         }
     }
-    console.log(str);
+    // console.log(str);
     $('#lower-wrapper').append(`<p id="players-ready">${str}</p>`);
 })
 
 socket.on('countdown', (data) => {
-    console.log(data);
+    // console.log(data);
     $('#cntdwn').remove();
     $('#canvas-wrapper').append(`<p id='cntdwn'>${data}</p>`);
 })
@@ -34,12 +48,16 @@ socket.on('gameStart', () => {
 })
 
 socket.on('user', (data) => {
+    // console.log(data);
     waitForList(data);
 })
 
 socket.on('users', (data) => {
     for(user of data){
-        waitForList(user);
+        console.log(user);
+        if(user != null){
+            waitForList(user);
+        }
     }
 })
 
