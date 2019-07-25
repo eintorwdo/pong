@@ -37,14 +37,12 @@ function removeSender(sock, all){
 }
 
 io.on('connection', (socket) => {
-    // console.log('CONNECT')
     allClients.push(socket)
     var roomNumber = Math.ceil(allClients.length/2)
     socket.join(`room-${roomNumber}`)
     // console.log(io.sockets.adapter.rooms['room-1'].sockets)
 
     if(gameRoom.has(`room-${roomNumber}`)){
-        // console.log('HAS ROOM')
         io.in(`room-${roomNumber}`).emit('tick', null)
         var room = gameRoom.get(`room-${roomNumber}`)
         room.clients.push(socket.id)
@@ -58,7 +56,6 @@ io.on('connection', (socket) => {
         },300)
     }
     else{
-        // console.log('DOESNT HAVE ROOM')
         var clients = [socket.id]
         var leftPaddle = new Paddle(true)
         var leftScore = 0
@@ -71,7 +68,6 @@ io.on('connection', (socket) => {
     }
 
     socket.on('username', (data) => {
-        // console.log('USERNAME')
         var room = gameRoom.get(`room-${roomNumber}`)
         if(!data || data == ''){
             data = 'default'
@@ -81,29 +77,23 @@ io.on('connection', (socket) => {
         }
         var index = room.clients.indexOf(socket.id)
         room.usernames[index] = data
-        // room.usernames.push(data)
-        // console.log(room.usernames)
         var test = [...room.usernames]
         gameRoom.set(`room-${roomNumber}`, room)
         setTimeout(function(){
             socket.emit('users', removeSender(data, test))
             io.in(`room-${roomNumber}`).emit('user', data)
         }, 250)
-        // console.log(room.usernames)
     })
 
 
     if(gameRoom.get(`room-${roomNumber}`).clients[0] == socket.id){
-        // console.log('LEFT SIDE')
         socket.emit('side', {left: true})
     }
     else if(gameRoom.get(`room-${roomNumber}`).clients[1] == socket.id){
-        // console.log('RIGHT SIDE')
         socket.emit('side', {left: false})
     }
 
     socket.on('paddleMovement', (data) => {
-        // console.log('PADDLE MOVE')
         var room = gameRoom.get(`room-${roomNumber}`)
         if(room.clients[0] == socket.id){
             if(data.up){
@@ -213,12 +203,13 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        // console.log('DISC')
         var i = allClients.indexOf(socket)
         allClients.splice(i, 1)
         var room = gameRoom.get(`room-${roomNumber}`)
         var index = room.clients.indexOf(socket.id)
-        io.emit('dconnected', room.usernames[i])
+        if(room.usernames){
+            io.in(`room-${roomNumber}`).emit('dconnected', room.usernames[i])
+        }
         room.ready[index] = false
         room.clients.splice(index, 1)
         if(room.clients.length == 0){
