@@ -20,12 +20,12 @@ class Paddle {
     this.y = height/2;
   }
   
-  update(up, down){
+  update(up){
     if(up){
       this.y = this.y - this.paddleSpeed;
       this.y = Math.min(Math.max(parseInt(this.y), this.height/2), height - this.height/2);
     }
-    else if(down){
+    else{
       this.y = this.y + this.paddleSpeed;
       this.y = Math.min(Math.max(parseInt(this.y), this.height/2), height - this.height/2);
     }
