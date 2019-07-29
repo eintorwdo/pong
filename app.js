@@ -56,13 +56,24 @@ io.on('connection', (socket) => {
         if(!room.usernames){
             room.usernames = new Array(2)
         }
+        if(room.usernames.includes(data)){
+            data = `${data}(1)`
+        }
         var index = room.clients.indexOf(socket.id)
         room.usernames[index] = data
-        var test = [...room.usernames]
+        // var test = [...room.usernames]
+        var test = {
+            id: [...room.clients],
+            name: [...room.usernames]
+        }
+        var usr = {
+            id: room.clients[index],
+            name: data
+        }
         gameRoom.set(`room-${roomNumber}`, room)
         setTimeout(function(){
-            socket.emit('users', utils.removeSender(data, test))
-            io.in(`room-${roomNumber}`).emit('user', data)
+            socket.emit('users', utils.removeSender(socket.id, test))
+            io.in(`room-${roomNumber}`).emit('user', usr)
         }, 450)
     })
 
@@ -111,7 +122,7 @@ io.on('connection', (socket) => {
             
                             io.in(`room-${roomNumber}`).emit('tick', utils.generateTickObj(room))
 
-                            if(utils.isGameOver(room, 5)){
+                            if(utils.isGameOver(room, 10)){
                                 utils.resetGameObjects(room)
                                 io.in(`room-${roomNumber}`).emit('tick', utils.generateTickObj(room))
                                 clearInterval(room.gameInterval)
@@ -140,7 +151,8 @@ io.on('connection', (socket) => {
         var room = gameRoom.get(`room-${roomNumber}`)
         var index = room.clients.indexOf(socket.id)
         if(room.usernames){
-            io.in(`room-${roomNumber}`).emit('dconnected', room.usernames[i])
+            io.in(`room-${roomNumber}`).emit('dconnected', room.clients[i])
+            room.usernames.splice(index, 1)
         }
         room.ready[index] = false
         room.clients.splice(index, 1)
@@ -156,9 +168,6 @@ io.on('connection', (socket) => {
                 clearInterval(room.countdown)
                 io.in(`room-${roomNumber}`).emit('gameStart')
             }
-            // room.leftPaddle.reset()
-            // room.rightPaddle.reset()
-            // room.ball.reset()
             utils.resetGameObjects(room)
             if(room.gameInterval){
                 io.in(`room-${roomNumber}`).emit('tick', utils.generateTickObj(room))
@@ -169,9 +178,15 @@ io.on('connection', (socket) => {
             }
             room.gameInterval = null
             room.countdown = null
-            // room.ready = [false, false]
             gameRoom.set(`room-${roomNumber}`, room)
         }
+    })
+
+    socket.on('msgsnd', (data) => {
+        var room = gameRoom.get(`room-${roomNumber}`)
+        var index = room.clients.indexOf(socket.id)
+        var name = room.usernames[index]
+        io.in(`room-${roomNumber}`).emit('msgrcv', {data, name})
     })
 })
 

@@ -14,7 +14,7 @@ function selectName(){
 selectName()
 
 function waitForList(data){
-    $('#user-list').append(`<li id="${data}">${data}</li>`);
+    $('#user-list').append(`<li id="${data.id}">${data.name}</li>`);
 }
 
 $('#ready').click(() => {
@@ -47,15 +47,15 @@ socket.on('user', (data) => {
 })
 
 socket.on('users', (data) => {
-    for(user of data){
-        console.log(user);
-        if(user != null){
-            waitForList(user);
+    for(i=0;i<data.id.length;i++){
+        if(data.name[i] != null){
+            waitForList({id: data.id[i], name: data.name[i]});
         }
     }
 })
 
 socket.on('dconnected', (data) => {
+    console.log('DCON');
     $(`#${data}`).remove();
 })
 
@@ -84,4 +84,25 @@ setInterval(function(){
             up: false
         });
     }
-}, 10)
+}, 5)
+
+var check = setInterval(() => {
+    if($('#msg-box')){
+        clearInterval(check);
+
+        document.getElementById('msg-box').addEventListener('keypress', () => {
+            if(event.keyCode == 13){
+                if($('#msg-box').val().toString().length > 0){
+                    var msg = $('#msg-box').val().toString()
+                    socket.emit('msgsnd', msg);
+                    $('#msg-box').val('');
+                }
+            }
+        })
+    }
+}, 100)
+
+socket.on('msgrcv', (data) => {
+    // console.log(data);
+    $('#chat').append(`<li>${data.name}: ${data.data}</li>`);
+})

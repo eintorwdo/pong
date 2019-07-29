@@ -6,37 +6,47 @@ class Ball{
     this.r = this.d/2;
     this.x = width/2;
     this.y = height/2;
-    this.angle = Math.random(-Math.PI/4, Math.PI/4);
-    this.maxSpeed = 10;
-    this.minSpeed = 3;
+    this.angle = Math.random(-Math.PI/2, Math.PI/2);
+    this.maxSpeed = 9;
+    this.minSpeed = 5;
     var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0
     if(direction == 0){
       direction = -1
     }
-    this.xspeed = direction * 5 * Math.cos(this.angle);
-    this.yspeed = this.minSpeed * Math.sin(this.angle);
+    this.xspeed = direction * (this.minSpeed-2) * Math.cos(this.angle);
+    this.yspeed = (this.minSpeed-2) * Math.sin(this.angle);
   }
   
   reset(){
     this.x = width/2;
     this.y = height/2;
-    this.angle = Math.random(-Math.PI/4, Math.PI/4);
+    this.angle = Math.random(-Math.PI/2, Math.PI/2);
     var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0
     if(direction == 0){
       direction = -1
     }
-    this.xspeed = direction * 5 * Math.cos(this.angle);
-    this.yspeed = 2 * Math.sin(this.angle);
+    this.xspeed = direction * (this.minSpeed-2) * Math.cos(this.angle);
+    this.yspeed = 3 * Math.sin(this.angle);
+    return [this.xspeed, this.yspeed]
+  }
+
+  freeze(spd){
+    this.xspeed = 0
+    this.yspeed = 0
+    setTimeout(()=>{
+      this.xspeed = spd[0]
+      this.yspeed = spd[1]
+    }, 1000)
   }
   
   update(){
     this.x = this.x + this.xspeed;
     this.y = this.y + this.yspeed;
     
-    if(this.x - this.r < 30){
+    if(this.x - this.r < 10){
       return -1;
     }
-    else if(this.x + this.r > width - 30){
+    else if(this.x + this.r > width - 10){
       return 1;
     }
     

@@ -63,3 +63,27 @@ canvas {
   position: absolute;
   font-size: 64px;
 }
+#chat-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  border-style: solid;
+  border-width: 1px;
+  padding: 5px;
+  border-radius: 3px;
+  background: gray;
+}
+
+#chat{
+  width: 100%;
+  padding: 3px;
+  list-style: none;
+  max-height: 45px;
+  overflow-y: scroll;
+}
+
+#msg-box{
+  width: 100%;
+}

@@ -7,27 +7,23 @@ function score(left, room){
     }
     room.leftPaddle.reset()
     room.rightPaddle.reset()
-    room.ball.reset()
+    var spd = room.ball.reset()
+    room.ball.freeze(spd)
 }
 
 function removeSender(sock, all){
-    var newArr
-    if(!Array.isArray(all)){
-        newArr = Object.keys(all)
-    }
-    else{
-        newArr = all
-    }
-    for(i=0;i<newArr.length;i++){
-        if(newArr[i]){
-            newArr[i] = newArr[i].toString()
+    // var newArr
+    for(i=0;i<all.id.length;i++){
+        if(all.id[i]){
+            all.id[i] = all.id[i].toString()
         }
-        if(newArr[i] == sock){
-            newArr.splice(i,1)
+        if(all.id[i] == sock){
+            all.id.splice(i,1)
+            all.name.splice(i,1)
             continue
         }
     }
-    return newArr
+    return all
 }
 
 function movePaddle(room, socket, data){

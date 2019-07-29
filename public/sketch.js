@@ -4,17 +4,6 @@ var ball;
 var leftScore = 0;
 var rightScore = 0;
 
-// function selectName(){
-//   var name = prompt('Enter your name:');
-//   if(!name){
-//     selectName()
-//   }
-//   else{
-//     socket.emit('username');
-//   }
-// }
-
-// selectName()
 
 function setup() {
   var cnv = createCanvas(800, 600);
@@ -22,6 +11,9 @@ function setup() {
   $('#wrapper').append('<ul id="user-list"></ul>');
   $('#test').append('<div id="lower-wrapper"></div>')
   $('#lower-wrapper').append('<p id="ready-list">Players not ready: </p>');
+  $('#test').append('<div id="chat-wrapper"></div>');
+  $('#chat-wrapper').append('<ul id="chat"></ul>');
+  $('#chat-wrapper').append('<input type="text" id="msg-box">');
   window.list = true;
   leftPaddle = new Paddle(true);
   rightPaddle = new Paddle(false);
