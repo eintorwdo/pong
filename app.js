@@ -74,6 +74,10 @@ io.on('connection', (socket) => {
         setTimeout(function(){
             socket.emit('users', utils.removeSender(socket.id, test))
             io.in(`room-${roomNumber}`).emit('user', usr)
+            if(room.messages){
+                var msgs = [...room.messages]
+                socket.emit('msgrcv', msgs)
+            }
         }, 450)
     })
 
@@ -186,6 +190,10 @@ io.on('connection', (socket) => {
         var room = gameRoom.get(`room-${roomNumber}`)
         var index = room.clients.indexOf(socket.id)
         var name = room.usernames[index]
+        if(!room.messages){
+            room.messages = []
+        }
+        room.messages.push({data, name})
         io.in(`room-${roomNumber}`).emit('msgrcv', {data, name})
     })
 })

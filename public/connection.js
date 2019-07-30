@@ -102,7 +102,19 @@ var check = setInterval(() => {
     }
 }, 100)
 
+function autoScroll(){
+    $('#chat li').last()[0].scrollIntoView();
+}
+
 socket.on('msgrcv', (data) => {
-    // console.log(data);
-    $('#chat').append(`<li>${data.name}: ${data.data}</li>`);
+    if(Array.isArray(data)){
+        for(msg of data){
+            console.log(msg)
+            $('#chat').append(`<li>${msg.name}: ${msg.data}</li>`);
+        }
+    }
+    else{
+        $('#chat').append(`<li>${data.name}: ${data.data}</li>`);
+    }
+    autoScroll();
 })

@@ -8,12 +8,13 @@ var rightScore = 0;
 function setup() {
   var cnv = createCanvas(800, 600);
   cnv.parent('canvas-wrapper');
-  $('#wrapper').append('<ul id="user-list"></ul>');
+  $('#wrapper').append('<div id="user-list-wrapper"></div>');
+  $('#user-list-wrapper').append('<ul id="user-list"></ul>');
   $('#test').append('<div id="lower-wrapper"></div>')
   $('#lower-wrapper').append('<p id="ready-list">Players not ready: </p>');
-  $('#test').append('<div id="chat-wrapper"></div>');
+  $('#button-wrp').append('<div id="chat-wrapper"></div>');
   $('#chat-wrapper').append('<ul id="chat"></ul>');
-  $('#chat-wrapper').append('<input type="text" id="msg-box">');
+  $('#chat-wrapper').append('<input type="text" id="msg-box" placeholder="Send message...">');
   window.list = true;
   leftPaddle = new Paddle(true);
   rightPaddle = new Paddle(false);

@@ -19,6 +19,7 @@ canvas {
   border: none;
   font-size: 16px;
   border-radius: 3px;
+  margin-bottom: 10px;
 }
 
 #ready:disabled{
@@ -42,6 +43,9 @@ canvas {
 
 #button-wrp{
   margin-right: 15px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  display: flex;
 }
 
 #ready-list{
@@ -64,11 +68,12 @@ canvas {
   font-size: 64px;
 }
 #chat-wrapper{
+  width: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-
+  height: 600px;
   border-style: solid;
   border-width: 1px;
   padding: 5px;
@@ -77,13 +82,34 @@ canvas {
 }
 
 #chat{
+  height: 90%;
   width: 100%;
   padding: 3px;
   list-style: none;
-  max-height: 45px;
   overflow-y: scroll;
+  margin: auto;
+  word-break: break-word;
+}
+
+#chat li{
+  border-bottom-style: solid;
+  border-width: 1px;
 }
 
 #msg-box{
   width: 100%;
+  margin-top: 5px;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+#even-more-wrapped{
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+#user-list-wrapper{
+  display: flex;
+  width: 25%;
 }
