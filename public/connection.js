@@ -76,12 +76,12 @@ socket.on('gameOver', (data) => {
 setInterval(function(){
     if(keyIsDown(UP_ARROW)){
         socket.emit('paddleMovement', {
-            up: true
+            direction: 'up'
         });
     }
     else if(keyIsDown(DOWN_ARROW)){
         socket.emit('paddleMovement', {
-            up: false
+            direction: 'down'
         });
     }
 }, 5)
@@ -89,7 +89,6 @@ setInterval(function(){
 var check = setInterval(() => {
     if($('#msg-box')){
         clearInterval(check);
-
         document.getElementById('msg-box').addEventListener('keypress', () => {
             if(event.keyCode == 13){
                 if($('#msg-box').val().toString().length > 0){

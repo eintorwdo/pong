@@ -1,3 +1,5 @@
+const {UP, DOWN} = require('../constants/constants.js');
+
 function score(left, room){
     if(left){
         room.leftScore++
@@ -12,7 +14,6 @@ function score(left, room){
 }
 
 function removeSender(sock, all){
-    // var newArr
     for(i=0;i<all.id.length;i++){
         if(all.id[i]){
             all.id[i] = all.id[i].toString()
@@ -28,19 +29,19 @@ function removeSender(sock, all){
 
 function movePaddle(room, socket, data){
     if(room.clients[0] == socket.id){
-        if(data.up){
-            room.leftPaddle.update(true)
+        if(data.direction.toLowerCase() === UP){
+            room.leftPaddle.update(UP);
         }
-        else{
-            room.leftPaddle.update(false)
+        else if(data.direction.toLowerCase() === DOWN){
+            room.leftPaddle.update(DOWN);
         }
     }
     else if(room.clients[1] == socket.id){
-        if(data.up){
-            room.rightPaddle.update(true)
+        if(data.direction.toLowerCase() === UP){
+            room.rightPaddle.update(UP);
         }
-        else{
-            room.rightPaddle.update(false)
+        else if(data.direction.toLowerCase() === DOWN){
+            room.rightPaddle.update(DOWN);
         }
     }
 }

@@ -1,14 +1,13 @@
+const {LEFT, RIGHT, UP, DOWN} = require('./constants/constants.js');
+
 class Paddle {
-  
-  constructor(left){
+  constructor(side){
     this.width = 30;
-    if(left == true){
-      this.left = true
-      this.x = this.width
+    if(side.toLowerCase() === LEFT){
+      this.x = this.width;
     }
-    else{
-      this.left = false
-      this.x = width - this.width
+    else if(side.toLowerCase() === RIGHT){
+      this.x = width - this.width;
     }
     this.y = height/2;
     this.paddleSpeed = 6;
@@ -20,16 +19,16 @@ class Paddle {
     this.y = height/2;
   }
   
-  update(up){
-    if(up){
+  update(direction){
+    if(direction.toLowerCase() === UP){
       this.y = this.y - this.paddleSpeed;
-      this.y = Math.min(Math.max(parseInt(this.y), this.height/2), height - this.height/2);
+      this.y = Math.min(Math.max(this.y, this.height/2), height - this.height/2);
     }
-    else{
+    else if(direction.toLowerCase() === DOWN){
       this.y = this.y + this.paddleSpeed;
-      this.y = Math.min(Math.max(parseInt(this.y), this.height/2), height - this.height/2);
+      this.y = Math.min(Math.max(this.y, this.height/2), height - this.height/2);
     }
   }
 }
 
-module.exports = Paddle
+module.exports = Paddle;

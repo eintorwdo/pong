@@ -1,34 +1,32 @@
-const express = require('express')
-var app = express()
-var server = require('http').Server(app)
-var io = require('socket.io')(server)
-var Ball = require('./Ball.js')
-var Paddle = require('./Paddle.js')
-const utils = require('./utils/utils.js')
-global.width = 800
-global.height = 600
+const express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var Ball = require('./Ball.js');
+var Paddle = require('./Paddle.js');
+const utils = require('./utils/utils.js');
+global.width = 800;
+global.height = 600;
+const {LEFT, RIGHT} = require('./constants/constants.js');
 
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + `/index.html`)
-})
+});
 
-var allClients = []
-var gameRoom = new Map()
-
+var allClients = [];
+var gameRoom = new Map();
 
 io.on('connection', (socket) => {
-    allClients.push(socket)
-    var roomNumber = Math.ceil(allClients.length/2)
-    socket.join(`room-${roomNumber}`)
-    // console.log(io.sockets.adapter.rooms['room-1'].sockets)
-
+    allClients.push(socket);
+    var roomNumber = Math.ceil(allClients.length/2);
+    socket.join(`room-${roomNumber}`);
     if(gameRoom.has(`room-${roomNumber}`)){
-        io.in(`room-${roomNumber}`).emit('tick', null)
-        var room = gameRoom.get(`room-${roomNumber}`)
-        room.clients.push(socket.id)
-        room.rightPaddle = new Paddle(false)
+        io.in(`room-${roomNumber}`).emit('tick', null);
+        var room = gameRoom.get(`room-${roomNumber}`);
+        room.clients.push(socket.id);
+        room.rightPaddle = new Paddle(RIGHT);
         room.ball = new Ball(width, height)
         utils.resetScore(room)
         gameRoom.set(`room-${roomNumber}`, room)
@@ -38,7 +36,7 @@ io.on('connection', (socket) => {
     }
     else{
         var clients = [socket.id]
-        var leftPaddle = new Paddle(true)
+        var leftPaddle = new Paddle(LEFT)
         var leftScore = 0
         var rightScore = 0
         var ready = [false, false]

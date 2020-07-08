@@ -9,9 +9,9 @@ class Ball{
     this.angle = Math.random(-Math.PI/2, Math.PI/2);
     this.maxSpeed = 9;
     this.minSpeed = 5;
-    var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0
+    var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0;
     if(direction == 0){
-      direction = -1
+      direction = -1;
     }
     this.xspeed = direction * (this.minSpeed-2) * Math.cos(this.angle);
     this.yspeed = (this.minSpeed-2) * Math.sin(this.angle);
@@ -21,13 +21,13 @@ class Ball{
     this.x = width/2;
     this.y = height/2;
     this.angle = Math.random(-Math.PI/2, Math.PI/2);
-    var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0
+    var direction = Math.floor(Math.random() * (1 - 0 +1)) + 0;
     if(direction == 0){
-      direction = -1
+      direction = -1;
     }
     this.xspeed = direction * (this.minSpeed-2) * Math.cos(this.angle);
     this.yspeed = 3 * Math.sin(this.angle);
-    return [this.xspeed, this.yspeed]
+    return [this.xspeed, this.yspeed];
   }
 
   freeze(spd){
