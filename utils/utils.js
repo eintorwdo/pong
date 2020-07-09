@@ -55,8 +55,7 @@ function isEveryPlayerReady(room){
 
 function generateTickObj(room){
     var tickObj = {
-        x: room.ball.x,
-        y: room.ball.y,
+        ball: room.ball,
         leftScore: room.leftScore,
         rightScore: room.rightScore,
         leftPaddle: room.leftPaddle,

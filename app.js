@@ -1,9 +1,9 @@
 const express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var Ball = require('./Ball.js');
-var Paddle = require('./Paddle.js');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const Ball = require('./lib/Ball.js');
+const Paddle = require('./lib/Paddle.js');
 const utils = require('./utils/utils.js');
 global.width = 800;
 global.height = 600;
@@ -12,26 +12,26 @@ const {LEFT, RIGHT} = require('./constants/constants.js');
 app.use(express.static('public'));
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + `/index.html`)
+    res.sendFile(__dirname + `/index.html`);
 });
 
-var allClients = [];
-var gameRoom = new Map();
+let allClients = [];
+let gameRoom = new Map();
 
 io.on('connection', (socket) => {
     allClients.push(socket);
-    var roomNumber = Math.ceil(allClients.length/2);
+    const roomNumber = Math.ceil(allClients.length/2);
     socket.join(`room-${roomNumber}`);
     if(gameRoom.has(`room-${roomNumber}`)){
         io.in(`room-${roomNumber}`).emit('tick', null);
-        var room = gameRoom.get(`room-${roomNumber}`);
+        let room = gameRoom.get(`room-${roomNumber}`);
         room.clients.push(socket.id);
         room.rightPaddle = new Paddle(RIGHT);
-        room.ball = new Ball(width, height)
-        utils.resetScore(room)
-        gameRoom.set(`room-${roomNumber}`, room)
+        room.ball = new Ball(width, height);
+        utils.resetScore(room);
+        gameRoom.set(`room-${roomNumber}`, room);
         setTimeout(()=>{
-            io.in(`room-${roomNumber}`).emit('users-ready', room.ready)
+            io.in(`room-${roomNumber}`).emit('users-ready', room.ready);
         },300)
     }
     else{
@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
         },300) 
     }
 
-    socket.on('username', (data) => {
+    socket.on('user', (data) => {
         var room = gameRoom.get(`room-${roomNumber}`)
         if(!data || data == ''){
             data = 'default'

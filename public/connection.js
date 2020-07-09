@@ -7,7 +7,7 @@ function selectName(){
       selectName()
     }
     else{
-      socket.emit('username', name);
+      socket.emit('user', name);
     }
 }
 

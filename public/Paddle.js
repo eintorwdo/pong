@@ -1,5 +1,4 @@
 class Paddle {
-  
   constructor(left){
     this.width = 30;
     this.height = 120;
