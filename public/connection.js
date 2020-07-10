@@ -13,7 +13,7 @@ function selectName(){
 
 selectName()
 
-function waitForList(data){
+function appendUserName(data){
     $('#user-list').append(`<li id="${data.id}">${data.name}</li>`);
 }
 
@@ -42,17 +42,12 @@ socket.on('gameStart', () => {
     $('#cntdwn').remove();
 })
 
-socket.on('user', (data) => {
-    waitForList(data);
-})
-
 socket.on('users', (data) => {
-    for(i=0;i<data.id.length;i++){
-        if(data.name[i] != null){
-            waitForList({id: data.id[i], name: data.name[i]});
-        }
-    }
-})
+    $('#user-list').empty();
+    data.forEach(user => {
+        appendUserName({id: user.id, name: user.name});
+    });
+});
 
 socket.on('dconnected', (data) => {
     console.log('DCON');
