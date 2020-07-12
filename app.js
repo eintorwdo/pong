@@ -9,6 +9,7 @@ const {findRoomWithPlayer} = require('./utils/utils.js');
 global.width = 800;
 global.height = 600;
 const {LEFT, RIGHT} = require('./constants/constants.js');
+const { count } = require('console');
 
 app.use(express.static('public'));
 
@@ -21,7 +22,7 @@ const rooms = [];
 
 io.on('connection', (socket) => {
     allClients.push(socket);
-    const roomNumber = findRoomWithPlayer(rooms);
+    let roomNumber = findRoomWithPlayer(rooms);
     let room;
     let countdown;
     let game;
@@ -36,9 +37,11 @@ io.on('connection', (socket) => {
         }, 300);
     }
     else{
+        roomNumber = rooms.length;
         room = new Room();
         room.addUser(socket.id);
         rooms.push(room);
+        socket.join(`room-${roomNumber}`);
         setTimeout(()=>{
             io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
         }, 300);
@@ -52,13 +55,11 @@ io.on('connection', (socket) => {
         setTimeout(function(){
             io.in(`room-${roomNumber}`).emit('users', room.users);
         }, 450);
-    })
+    });
 
 
     socket.on('paddleMovement', (data) => {
-        if(game){
-            rooms[roomNumber].movePaddle(socket.id, data.direction);
-        }
+        rooms[roomNumber].movePaddle(socket.id, data.direction);
     });
 
     socket.on('ready', () => {
@@ -68,26 +69,25 @@ io.on('connection', (socket) => {
             if(room.bothAreReady()){
                 let x = 3;
                 countdown = setInterval(() => {
-                    io.in(`room-${roomNumber}`).emit('countdown', x)
+                    room.setCountdown(countdown);
+                    io.in(`room-${roomNumber}`).emit('countdown', x);
                     x--;
                     if(x < 0){
-                        clearInterval(countdown)
-                        countdown = null;
+                        countdown = room.clearCountdown();
                         io.in(`room-${roomNumber}`).emit('gameStart');
                         game = setInterval(function(){
+                            room.startGame(game);
                             room.ball.hitRightPaddle(room.rightPaddle);
                             room.ball.hitLeftPaddle(room.leftPaddle);
                             if(room.ball.update() === -1){
-                                room.goalScore(LEFT);
-                            }
-                            else if(room.ball.update() === 1){
                                 room.goalScore(RIGHT);
                             }
-                            if(room.isGameOver(10)){
+                            else if(room.ball.update() === 1){
+                                room.goalScore(LEFT);
+                            }
+                            if(room.isGameOver(2)){
                                 io.in(`room-${roomNumber}`).emit('tick', room.getTick(room));
-                                clearInterval(game);
-                                game = null;
-                                countdown = null;
+                                game = room.stopGame();                                
                                 if(room.leftScore > room.rightScore){
                                     io.in(`room-${roomNumber}`).emit('gameOver', room.users[0].name);
                                 }
@@ -102,38 +102,30 @@ io.on('connection', (socket) => {
                 }, 1000);
             }
         }
-    })
+    });
 
     socket.on('disconnect', () => {
         const removedUser = room.removeUser(socket.id);
         io.in(`room-${roomNumber}`).emit('dconnected', removedUser.id);
         if(room.users.length == 0){
-            if(countdown){
-                clearInterval(countdown);
-            }
-            if(game){
-                clearInterval(game);
-            }
+            countdown = room.clearCountdown();
+            game = room.stopGame();
             rooms.splice(roomNumber, 1);
             room = null;
         }
         else{
-            if(countdown){
-                clearInterval(countdown);
+            if(room.getCountdown()){
+                countdown = room.clearCountdown();
                 io.in(`room-${roomNumber}`).emit('gameStart');
             }
             room.resetGame();
-            if(game){
+            if(room.getGame()){
                 io.in(`room-${roomNumber}`).emit('tick', room.getTick());
-            }
-            if(game){
-                clearInterval(game);
                 socket.to(`room-${roomNumber}`).emit('opleft');
+                game = room.stopGame();
             }
-            game = null;
-            countdown = null;
         }
-    })
+    });
 
     socket.on('msgsnd', (data) => {
         const user = room.getUserById(socket.id);
@@ -142,7 +134,7 @@ io.on('connection', (socket) => {
             name = user.name;
         }
         io.in(`room-${roomNumber}`).emit('msgrcv', {data, name});
-    })
+    });
 })
 
-server.listen(process.env.PORT || 3000)
+server.listen(process.env.PORT || 3000);
