@@ -2,14 +2,11 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const Ball = require('./lib/Ball.js');
-const Paddle = require('./lib/Paddle.js');
 const Room = require('./lib/Room.js');
 const {findRoomWithPlayer} = require('./utils/utils.js');
 global.width = 800;
 global.height = 600;
 const {LEFT, RIGHT} = require('./constants/constants.js');
-const { count } = require('console');
 
 app.use(express.static('public'));
 
@@ -17,11 +14,11 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + `/index.html`);
 });
 
-const allClients = [];
+// const allClients = [];
 const rooms = [];
 
 io.on('connection', (socket) => {
-    allClients.push(socket);
+    // allClients.push(socket);
     let roomNumber = findRoomWithPlayer(rooms);
     let room;
     let countdown;
@@ -32,9 +29,9 @@ io.on('connection', (socket) => {
         room = rooms[roomNumber];
         room.addUser(socket.id);
         rooms.splice(roomNumber, 1 , room);
-        setTimeout(() => {
+        // setTimeout(() => {
             io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
-        }, 300);
+        // }, 300);
     }
     else{
         roomNumber = rooms.length;
@@ -42,9 +39,9 @@ io.on('connection', (socket) => {
         room.addUser(socket.id);
         rooms.push(room);
         socket.join(`room-${roomNumber}`);
-        setTimeout(()=>{
+        // setTimeout(()=>{
             io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
-        }, 300);
+        // }, 300);
     }
 
     socket.on('user', (data) => {
@@ -114,11 +111,11 @@ io.on('connection', (socket) => {
             room = null;
         }
         else{
+            room.resetGame();
             if(room.getCountdown()){
                 countdown = room.clearCountdown();
                 io.in(`room-${roomNumber}`).emit('gameStart');
             }
-            room.resetGame();
             if(room.getGame()){
                 io.in(`room-${roomNumber}`).emit('tick', room.getTick());
                 socket.to(`room-${roomNumber}`).emit('opleft');

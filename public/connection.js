@@ -1,10 +1,30 @@
 const socket = io();
 new p5();
+let usersReady = {innerArr: []};
+let usersProxy = new Proxy(usersReady, {
+    set: function(target, property, value){
+        setUnreadyUsers(value);
+    },
+    get: function(target, name){
+        return target[name];
+    }
+});
+
+const setUnreadyUsers = (arr) => {
+    $('#players-ready').remove();
+    let str = '';
+    arr.forEach((el, i) => {
+        if(!el){
+            str = str + ' player ' + (i+1) + ',';
+        }
+    });
+    $('#lower-wrapper').append(`<p id="players-ready">${str}</p>`);
+}
 
 function selectName(){
     var name = prompt('Enter your name:');
     if(!name){
-      selectName()
+      selectName();
     }
     else{
       socket.emit('user', name);
@@ -19,28 +39,23 @@ function autoScroll(){
     $('#chat li').last()[0].scrollIntoView();
 }
 
-// $(function() {
+socket.on('users-ready', (data) => {
+    usersProxy.innerArr = data;
+});
+
+$(function(){
     selectName();
+    setUnreadyUsers(usersProxy.innerArr);
+
     $('#ready').click(() => {
         socket.emit('ready');
         $('#ready').attr("disabled", true);
-    })
-
-    socket.on('users-ready', (data) => {
-        $('#players-ready').remove();
-        var str = "";
-        for(i=0;i<data.length;i++){
-            if(!data[i]){
-                str = str + ' player ' + (i+1) + ',';
-            }
-        }
-        $('#lower-wrapper').append(`<p id="players-ready">${str}</p>`);
-    })
+    });
 
     socket.on('countdown', (data) => {
         $('#cntdwn').remove();
         $('#canvas-wrapper').append(`<p id='cntdwn'>${data}</p>`);
-    })
+    });
 
     socket.on('gameStart', () => {
         $('#cntdwn').remove();
@@ -56,21 +71,21 @@ function autoScroll(){
     socket.on('dconnected', (data) => {
         console.log('DCON');
         $(`#${data}`).remove();
-    })
+    });
 
     socket.on('tick', (data) => {
         window.gameData = data;
-    })
+    });
 
     socket.on('opleft', () => {
         alert('Opponent left. YOU WIN!');
         $('#ready').attr("disabled", false);
-    })
+    });
 
     socket.on('gameOver', (data) => {
         alert(`Koniec gry. Wygrywa ${data}!`);
         $('#ready').attr("disabled", false);
-    })
+    });
 
     setInterval(function(){
         if(keyIsDown(UP_ARROW)){
@@ -98,7 +113,7 @@ function autoScroll(){
                 }
             })
         }
-    }, 100)
+    }, 100);
 
     socket.on('msgrcv', (data) => {
         if(Array.isArray(data)){
@@ -112,5 +127,8 @@ function autoScroll(){
         }
         autoScroll();
     });
-// });
+});
 
+window.onbeforeunload = () => {
+    socket.disconnect();
+};
