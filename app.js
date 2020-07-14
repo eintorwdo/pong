@@ -14,11 +14,9 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + `/index.html`);
 });
 
-// const allClients = [];
 const rooms = [];
 
 io.on('connection', (socket) => {
-    // allClients.push(socket);
     let roomNumber = findRoomWithPlayer(rooms);
     let room;
     let countdown;
@@ -29,19 +27,15 @@ io.on('connection', (socket) => {
         room = rooms[roomNumber];
         room.addUser(socket.id);
         rooms.splice(roomNumber, 1 , room);
-        // setTimeout(() => {
-            io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
-        // }, 300);
+        io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
     }
     else{
         roomNumber = rooms.length;
-        room = new Room();
+        room = new Room(5);
         room.addUser(socket.id);
         rooms.push(room);
         socket.join(`room-${roomNumber}`);
-        // setTimeout(()=>{
-            io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
-        // }, 300);
+        io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
     }
 
     socket.on('user', (data) => {
@@ -49,9 +43,7 @@ io.on('connection', (socket) => {
             data = 'default';
         }
         room.setUserName(data, socket.id);
-        setTimeout(function(){
-            io.in(`room-${roomNumber}`).emit('users', room.users);
-        }, 450);
+        io.in(`room-${roomNumber}`).emit('users', room.users);
     });
 
 
@@ -82,7 +74,7 @@ io.on('connection', (socket) => {
                             else if(room.ball.update() === 1){
                                 room.goalScore(LEFT);
                             }
-                            if(room.isGameOver(2)){
+                            if(room.isGameOver()){
                                 io.in(`room-${roomNumber}`).emit('tick', room.getTick(room));
                                 game = room.stopGame();                                
                                 if(room.leftScore > room.rightScore){
