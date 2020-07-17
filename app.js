@@ -6,7 +6,6 @@ const Room = require('./lib/Room.js');
 const {findRoomWithPlayer} = require('./utils/utils.js');
 global.width = 800;
 global.height = 600;
-const {LEFT, RIGHT} = require('./constants/constants.js');
 
 app.use(express.static('public'));
 
@@ -31,7 +30,7 @@ io.on('connection', (socket) => {
     }
     else{
         roomNumber = rooms.length;
-        room = new Room(5);
+        room = new Room(5, roomNumber, io);
         room.addUser(socket.id);
         rooms.push(room);
         socket.join(`room-${roomNumber}`);
@@ -53,42 +52,10 @@ io.on('connection', (socket) => {
 
     socket.on('ready', () => {
         if(!countdown){
-            room.setReady(socket.id);
+            room.setUserReady(socket.id);
             io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
             if(room.bothAreReady()){
-                let x = 3;
-                countdown = setInterval(() => {
-                    room.setCountdown(countdown);
-                    io.in(`room-${roomNumber}`).emit('countdown', x);
-                    x--;
-                    if(x < 0){
-                        countdown = room.clearCountdown();
-                        io.in(`room-${roomNumber}`).emit('gameStart');
-                        game = setInterval(function(){
-                            room.startGame(game);
-                            room.ball.hitRightPaddle(room.rightPaddle);
-                            room.ball.hitLeftPaddle(room.leftPaddle);
-                            if(room.ball.update() === -1){
-                                room.goalScore(RIGHT);
-                            }
-                            else if(room.ball.update() === 1){
-                                room.goalScore(LEFT);
-                            }
-                            if(room.isGameOver()){
-                                io.in(`room-${roomNumber}`).emit('tick', room.getTick(room));
-                                game = room.stopGame();                                
-                                if(room.leftScore > room.rightScore){
-                                    io.in(`room-${roomNumber}`).emit('gameOver', room.users[0].name);
-                                }
-                                else{
-                                    io.in(`room-${roomNumber}`).emit('gameOver', room.users[1].name);
-                                }
-                                io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready))
-                            }
-                            io.in(`room-${roomNumber}`).emit('tick', room.getTick());
-                        }, 15);
-                    }
-                }, 1000);
+                room.setCountdown();
             }
         }
     });
@@ -124,6 +91,6 @@ io.on('connection', (socket) => {
         }
         io.in(`room-${roomNumber}`).emit('msgrcv', {data, name});
     });
-})
+});
 
 server.listen(process.env.PORT || 3000);
