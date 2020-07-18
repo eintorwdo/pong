@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     }
     else{
         roomNumber = rooms.length;
-        room = new Room(5, roomNumber, io);
+        room = new Room(25, roomNumber, io);
         room.addUser(socket.id);
         rooms.push(room);
         socket.join(`room-${roomNumber}`);
