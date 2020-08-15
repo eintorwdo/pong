@@ -1,13 +1,12 @@
 class Paddle {
-  constructor(left){
+  constructor(side){
     this.width = 30;
     this.height = 120;
-    this.left = left;
     this.y = height/2;
-    if(this.left){
+    if(side === 'LEFT'){
       this.x = this.width;
     }
-    else{
+    else if(side === 'RIGHT'){
       this.x = width - this.width;
     }
     this.hitMargin = 5;

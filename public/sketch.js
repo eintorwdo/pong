@@ -1,9 +1,8 @@
-var leftPaddle;
-var rightPaddle;
-var ball;
-var leftScore = 0;
-var rightScore = 0;
-
+let leftPaddle;
+let rightPaddle;
+let ball;
+let leftScore = 0;
+let rightScore = 0;
 
 function setup() {
   var cnv = createCanvas(800, 600);
@@ -16,8 +15,8 @@ function setup() {
   $('#chat-wrapper').append('<ul id="chat"></ul>');
   $('#chat-wrapper').append('<input type="text" id="msg-box" placeholder="Send message...">');
   window.list = true;
-  leftPaddle = new Paddle(true);
-  rightPaddle = new Paddle(false);
+  leftPaddle = new Paddle('LEFT');
+  rightPaddle = new Paddle('RIGHT');
   ball = new Ball();
 }
 

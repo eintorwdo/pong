@@ -1,5 +1,4 @@
 class Ball{
-  
   constructor(){
     this.d = 20;
     this.x = width/2;

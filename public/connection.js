@@ -1,5 +1,5 @@
 const socket = io();
-new p5();
+
 let usersReady = {innerArr: []};
 let usersProxy = new Proxy(usersReady, {
     set: function(target, property, value){
@@ -105,25 +105,24 @@ window.onload = function(){
             }
         }, 5);
     
-        var check = setInterval(() => {
+        let checkMessageSend = setInterval(() => {
             if($('#msg-box')){
-                clearInterval(check);
+                clearInterval(checkMessageSend);
                 document.getElementById('msg-box').addEventListener('keypress', () => {
                     if(event.keyCode == 13){
                         if($('#msg-box').val().toString().length > 0){
-                            var msg = $('#msg-box').val().toString()
+                            const msg = $('#msg-box').val().toString();
                             socket.emit('msgsnd', msg);
                             $('#msg-box').val('');
                         }
                     }
-                })
+                });
             }
         }, 100);
     
         socket.on('msgrcv', (data) => {
             if(Array.isArray(data)){
                 for(msg of data){
-                    console.log(msg)
                     $('#chat').append(`<li>${msg.name}: ${msg.data}</li>`);
                 }
             }
