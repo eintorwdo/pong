@@ -47,7 +47,7 @@ socket.on('users-ready', (data) => {
     usersProxy.innerArr = data;
 });
 
-window.onload = function(){
+window.onload = () => {
     $(function(){
         selectName();
         setUnreadyUsers(usersProxy.innerArr);
@@ -105,20 +105,15 @@ window.onload = function(){
             }
         }, 5);
     
-        let checkMessageSend = setInterval(() => {
-            if($('#msg-box')){
-                clearInterval(checkMessageSend);
-                document.getElementById('msg-box').addEventListener('keypress', () => {
-                    if(event.keyCode == 13){
-                        if($('#msg-box').val().toString().length > 0){
-                            const msg = $('#msg-box').val().toString();
-                            socket.emit('msgsnd', msg);
-                            $('#msg-box').val('');
-                        }
-                    }
-                });
+        document.getElementById('msg-box').addEventListener('keypress', () => {
+            if(event.keyCode == 13){
+                if($('#msg-box').val().toString().length > 0){
+                    const msg = $('#msg-box').val().toString();
+                    socket.emit('msgsnd', msg);
+                    $('#msg-box').val('');
+                }
             }
-        }, 100);
+        });
     
         socket.on('msgrcv', (data) => {
             if(Array.isArray(data)){
@@ -132,7 +127,7 @@ window.onload = function(){
             autoScroll();
         });
     });
-};
+}
 
 window.onbeforeunload = () => {
     socket.disconnect();

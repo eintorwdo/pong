@@ -30,7 +30,7 @@ background(220);
     }
   }
   
-  if(ball){
+  // if(ball){
     if(window.gameData){
       textSize(32);
       textAlign(LEFT);
@@ -46,5 +46,5 @@ background(220);
       leftPaddle.show();
       rightPaddle.show();
     }
-  }
+  // }
 }

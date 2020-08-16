@@ -21,21 +21,18 @@ io.on('connection', (socket) => {
     let countdown;
     let game;
     if(roomNumber !== -1){
-        socket.join(`room-${roomNumber}`);
         io.in(`room-${roomNumber}`).emit('tick', null);
         room = rooms[roomNumber];
-        room.addUser(socket.id);
         rooms.splice(roomNumber, 1 , room);
-        io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
     }
     else{
         roomNumber = rooms.length;
         room = new Room(25, roomNumber, io);
-        room.addUser(socket.id);
         rooms.push(room);
-        socket.join(`room-${roomNumber}`);
-        io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
     }
+    room.addUser(socket.id);
+    socket.join(`room-${roomNumber}`);
+    io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
 
     socket.on('user', (data) => {
         if(!data || data === ''){
