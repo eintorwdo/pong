@@ -30,21 +30,19 @@ background(220);
     }
   }
   
-  // if(ball){
-    if(window.gameData){
-      textSize(32);
-      textAlign(LEFT);
-      text(window.gameData.leftScore.toString(), 4*leftPaddle.width, 30);
-      text(window.gameData.rightScore.toString(), width - 4*rightPaddle.width, 30);
-      leftPaddle.y = window.gameData.leftPaddle.y;
-      rightPaddle.y = window.gameData.rightPaddle.y;
-      ball.x = window.gameData.ball.x;
-      ball.y = window.gameData.ball.y;
-      leftScore = window.gameData.leftScore;
-      rightScore = window.gameData.rightScore;
-      ball.show();
-      leftPaddle.show();
-      rightPaddle.show();
-    }
-  // }
+  if(window.gameData){
+    textSize(32);
+    textAlign(LEFT);
+    text(window.gameData.leftScore.toString(), 4*leftPaddle.width, 30);
+    text(window.gameData.rightScore.toString(), width - 4*rightPaddle.width, 30);
+    leftPaddle.y = window.gameData.leftPaddle.y;
+    rightPaddle.y = window.gameData.rightPaddle.y;
+    ball.x = window.gameData.ball.x;
+    ball.y = window.gameData.ball.y;
+    leftScore = window.gameData.leftScore;
+    rightScore = window.gameData.rightScore;
+    ball.show();
+    leftPaddle.show();
+    rightPaddle.show();
+  }
 }

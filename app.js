@@ -61,8 +61,6 @@ io.on('connection', (socket) => {
         const removedUser = room.removeUser(socket.id);
         io.in(`room-${roomNumber}`).emit('dconnected', removedUser.id);
         if(room.users.length == 0){
-            countdown = room.clearCountdown();
-            game = room.stopGame();
             rooms.splice(roomNumber, 1);
             room = null;
         }
