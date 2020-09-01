@@ -1,3 +1,5 @@
+const io = require('socket.io-client');
+import $ from 'jquery';
 const socket = io();
 
 let usersReady = {innerArr: []};
@@ -93,12 +95,12 @@ window.onload = () => {
         });
     
         setInterval(function(){
-            if(keyIsDown(UP_ARROW)){
+            if(window.p.keyIsDown(window.p.UP_ARROW)){
                 socket.emit('paddleMovement', {
                     direction: 'up'
                 });
             }
-            else if(keyIsDown(DOWN_ARROW)){
+            else if(window.p.keyIsDown(window.p.DOWN_ARROW)){
                 socket.emit('paddleMovement', {
                     direction: 'down'
                 });
