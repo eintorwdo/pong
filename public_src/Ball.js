@@ -6,8 +6,9 @@ class Ball{
   }
   
   show(){
-    window.p.fill(100);
-    window.p.circle(this.x, this.y, this.d);
+    const p5Sketch = window.p;
+    p5Sketch.fill(100);
+    p5Sketch.circle(this.x, this.y, this.d);
   }
 }
 

@@ -1,5 +1,5 @@
-const io = require('socket.io-client');
 import $ from 'jquery';
+const io = require('socket.io-client');
 const socket = io();
 
 let usersReady = {innerArr: []};

@@ -4,13 +4,11 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const Room = require('./lib/Room.js');
 const {findRoomWithPlayer} = require('./utils/utils.js');
-global.width = 800;
-global.height = 600;
 
 app.use(express.static('public'));
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + `/index.html`);
+    res.sendFile(__dirname + `/public/index.html`);
 });
 
 const rooms = [];
