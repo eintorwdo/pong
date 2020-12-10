@@ -76,7 +76,7 @@ window.onload = () => {
         });
     
         socket.on('dconnected', (data) => {
-            console.log('DCON');
+            $('#ready').attr("disabled", false);
             $(`#${data}`).remove();
         });
     

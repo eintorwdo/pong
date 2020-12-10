@@ -64,6 +64,7 @@ io.on('connection', (socket) => {
         }
         else{
             room.resetGame();
+            io.in(`room-${roomNumber}`).emit('users-ready', room.users.map(u => u.ready));
             if(room.getCountdown()){
                 countdown = room.clearCountdown();
                 io.in(`room-${roomNumber}`).emit('gameStart');
